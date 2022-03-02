@@ -43,6 +43,7 @@
                                        placeholder="Name Product" th:value="${product.name}">
                             </label>
                         </td>
+                        <td> <p th:if="${#fields.hasErrors('name')}" th:errors = "*{name}" style="color:red;"></p></td>
                     </tr>
                     <tr>
                         <th>Product Price</th>
@@ -52,6 +53,7 @@
                                        placeholder="Price" th:value="${product.price}">
                             </label>
                         </td>
+                        <td> <p th:if="${#fields.hasErrors('price')}" th:errors = "*{price}" style="color:red;"></p></td>
                     </tr>
                     <tr>
                         <th>Image</th>

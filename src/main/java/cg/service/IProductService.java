@@ -14,6 +14,10 @@ public interface IProductService {
 
     Product save(Product product);
 
+    Page<Product> findAllByNameContainingAndPriceAndCategory(double firstPrice, double secondPrice, String name, Category category, Pageable pageable);
+
+    Page<Product> findAllByPriceBetweenAndNameContaining(double firstPrice, double secondPrice, String name, Pageable pageable);
+
     Page<Product> findAllByNameContaining(String name, Pageable pageable);
 
     Page<Product> findAllByPriceBetween(double firstPrice, double secondPrice, Pageable pageable);

@@ -14,4 +14,10 @@ public interface IProductRepository extends PagingAndSortingRepository<Product, 
     Page<Product> findAllByPriceBetween(double firstPrice, double secondPrice, Pageable pageable);
 
     Page<Product> findAllByCategory(Category category, Pageable pageable);
+
+    Page<Product> findAllByPriceBetweenAndNameContainingAndCategory(double firstPrice, double secondPrice, String name, Category category, Pageable pageable);
+
+    Page<Product> findAllByPriceBetweenAndNameContaining(double firstPrice, double secondPrice, String name, Pageable pageable);
+
+    void deleteAllByCategory(Category category);
 }

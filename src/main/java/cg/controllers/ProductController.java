@@ -13,12 +13,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.xml.ws.BindingType;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/product")
@@ -79,8 +83,12 @@ public class ProductController {
     }
 
     @PostMapping("/save")
-    ModelAndView save(@ModelAttribute Product product){
+    ModelAndView save(@Validated @ModelAttribute Product product, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView("product/create");
+        if (bindingResult.hasFieldErrors()) {
+            modelAndView.addObject("message", "Create Fail !!!");
+            return modelAndView;
+        }
         MultipartFile multipartFile = product.getImageFile();
         String fileName = multipartFile.getOriginalFilename();
         try {
@@ -90,7 +98,7 @@ public class ProductController {
         }
         product.setImageUrl(fileName);
         Product product1 = productService.save(product);
-        if (product1 != null){
+        if (product1 != null) {
             modelAndView.addObject("message", "Create Product Successfully !!!");
         }
         Iterable<Category> categories = categoryService.findAll();
@@ -99,7 +107,7 @@ public class ProductController {
     }
 
     @GetMapping("/edit")
-    public ModelAndView editProduct(@RequestParam("id") Long id){
+    public ModelAndView editProduct(@RequestParam("id") Long id) {
         ModelAndView modelAndView = new ModelAndView("product/edit");
         Product product = productService.findById(id);
         modelAndView.addObject("categories", categoryService.findAll());
@@ -108,9 +116,13 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    public ModelAndView update(@RequestParam("id") Long id,@ModelAttribute Product product){
+    public ModelAndView update(@RequestParam("id") Long id, @Validated @ModelAttribute Product product, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView("product/edit");
-        if (product.getImageFile().getOriginalFilename().equals("")){
+        if (bindingResult.hasFieldErrors()) {
+            modelAndView.addObject("message", "Update Fail!!!");
+            return modelAndView;
+        }
+        if (product.getImageFile().getOriginalFilename().equals("")) {
             product.setImageFile(productService.findById(id).getImageFile());
             product.setImageUrl(productService.findById(id).getImageUrl());
         } else {
@@ -128,9 +140,46 @@ public class ProductController {
         modelAndView.addObject("categories", categoryService.findAll());
         modelAndView.addObject("message", "Update Product Successfully !!!");
         return modelAndView;
-
     }
 
+    @GetMapping("/search-product")
+    public ModelAndView searchProduct(@RequestParam(value = "nameSearch",required = false) String nameSearch, @RequestParam(value = "firstPrice",required = false) String firstPrice,
+                                      @RequestParam(value = "secondPrice",required = false) String secondPrice, @RequestParam(value = "category",required = false) String idCategory,
+                                      @SortDefault(sort = {"name"}, direction = Sort.Direction.ASC) @PageableDefault(value = 3) Pageable pageable) {
+        ModelAndView modelAndView = new ModelAndView("product/index");
+        List<Product> productsState = productService.findAll(pageable).getContent();
+        double max = 0, min = 0;
+        for (Product product : productsState) {
+            if (product.getPrice() < min) {
+                min = product.getPrice();
+            }
+            if (product.getPrice() > max) {
+                max = product.getPrice();
+            }
+        }
+        if (firstPrice.equals("")) {
+            firstPrice = String.valueOf(min);
+        }
+        if (secondPrice.equals("")) {
+            secondPrice = String.valueOf(max);
+        }
+
+        Page<Product> products;
+        if (idCategory.equals("") || idCategory.equals("0")) {
+            products = productService.findAllByPriceBetweenAndNameContaining(Double.parseDouble(firstPrice), Double.parseDouble(secondPrice), nameSearch, pageable);
+        } else {
+            Category category = categoryService.findById(Long.parseLong(idCategory));
+            products = productService.findAllByNameContainingAndPriceAndCategory(Double.parseDouble(firstPrice), Double.parseDouble(secondPrice), nameSearch, category, pageable);
+        }
+        modelAndView.addObject("nameSearch", nameSearch);
+        modelAndView.addObject("firstPrice", firstPrice);
+        modelAndView.addObject("secondPrice", secondPrice);
+        modelAndView.addObject("idCategory", idCategory);
+        modelAndView.addObject("products", products);
+        modelAndView.addObject("categories", categoryService.findAll());
+        modelAndView.addObject("view",view);
+        return modelAndView;
+    }
 
 
 }

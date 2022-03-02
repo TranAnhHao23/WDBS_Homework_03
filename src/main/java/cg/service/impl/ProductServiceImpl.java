@@ -38,17 +38,27 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    public Page<Product> findAllByNameContainingAndPriceAndCategory( double firstPrice, double secondPrice,String name, Category category, Pageable pageable) {
+        return productRepository.findAllByPriceBetweenAndNameContainingAndCategory(firstPrice, secondPrice, name, category, pageable);
+    }
+
+    @Override
+    public Page<Product> findAllByPriceBetweenAndNameContaining(double firstPrice, double secondPrice, String name, Pageable pageable) {
+        return productRepository.findAllByPriceBetweenAndNameContaining(firstPrice,secondPrice,name,pageable);
+    }
+
+    @Override
     public Page<Product> findAllByNameContaining(String name, Pageable pageable) {
         return productRepository.findAllByNameContaining(name, pageable);
     }
 
     @Override
     public Page<Product> findAllByPriceBetween(double firstPrice, double secondPrice, Pageable pageable) {
-        return productRepository.findAllByPriceBetween(firstPrice,secondPrice,pageable);
+        return productRepository.findAllByPriceBetween(firstPrice, secondPrice, pageable);
     }
 
     @Override
     public Page<Product> findAllByCategory(Category category, Pageable pageable) {
-        return productRepository.findAllByCategory(category,pageable);
+        return productRepository.findAllByCategory(category, pageable);
     }
 }

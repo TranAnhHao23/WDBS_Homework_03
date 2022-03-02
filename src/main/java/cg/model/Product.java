@@ -3,7 +3,10 @@ package cg.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "product")
@@ -12,9 +15,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     private String name;
 
-    @NotNull
+    @DecimalMin(value = "50.0", message = "Smallest price is 50!")
     private double price;
 
     private String imageUrl;

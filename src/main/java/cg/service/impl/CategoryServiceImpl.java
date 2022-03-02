@@ -1,18 +1,19 @@
 package cg.service.impl;
 
 import cg.model.Category;
-import cg.model.Product;
 import cg.repository.ICategoryRepository;
+import cg.repository.IProductRepository;
 import cg.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService {
     @Autowired
     private ICategoryRepository categoryRepository;
+
+    @Autowired
+    private IProductRepository productRepository;
 
 
     @Override
@@ -30,6 +31,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public void deleteById(Long id) {
+        Category category = findById(id);
+        productRepository.deleteAllByCategory(category);
         categoryRepository.deleteById(id);
     }
 

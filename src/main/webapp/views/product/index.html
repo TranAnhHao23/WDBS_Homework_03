@@ -37,13 +37,13 @@
             </a>
         </td>
         <td class="search-file">
-            <form class="nav-link d-flex" style="margin: 0" th:action="@{/home/search-product}" method="post">
+            <form class="nav-link d-flex" style="margin: 0" th:action="@{/product/search-product}" method="get">
                 <table>
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input class="form-control mr-2" type="text" size="50" placeholder="Search By Name..."
-                                       name="searchByName" th:value="${searchByName}">
+                                <input class="form-control mr-2" type="text" size="50" placeholder="Product Name..."
+                                       name="nameSearch" th:value="${nameSearch}">
                             </label>
                         </td>
                         <td rowspan="3">
@@ -68,11 +68,13 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <label for="sel1"></label>
-                            <select class="form-control" id="sel1">
+                            <label for="category"></label>
+                            <select class="form-control" id="category" name="category">
                                 <optgroup label="Select Category">
+                                    <option value="0">All Category</option>
                                     <option th:each="cate : ${categories}" th:value="${cate.idCategory}"
-                                            th:text="${cate.nameCategory}"></option>
+                                            th:text="${cate.nameCategory}"
+                                            th:selected="${idCategory == cate.idCategory}"></option>
                                 </optgroup>
                             </select>
                         </td>
@@ -128,7 +130,7 @@
                     </td>
                     <td>
                         <a th:href="@{/product/delete(id=${product.id})}" role="button" class="btn btn-danger"
-                           onclick="return confirm('Are you sure you want to Delete?')"><i
+                           onclick="return confirm('Do you want to Delete?')"><i
                                 class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
@@ -136,11 +138,22 @@
             </table>
         </div>
     </div>
-    <div>
-        <a th:if="${products.hasPrevious()}" th:href="@{'/product'(page=${products.number - 1})}"><i
+    <div th:if="${nameSearch == null}">
+        <a th:if="${products.hasPrevious()}"
+           th:href="@{'/product/'(page=${products.number - 1})}"><i
                 class="fa-solid fa-angles-left"></i></a>
         <span th:text="${products.number + 1}"></span>/<span th:text="${products.totalPages}"></span>
-        <a th:if="${products.hasNext()}" th:href="@{'/product'(page=${products.number + 1})}"><i
+        <a th:if="${products.hasNext()}"
+           th:href="@{'/product/'(page=${products.number + 1})}"><i
+                class="fa-solid fa-angles-right"></i></a>
+    </div>
+    <div th:unless="${nameSearch == null}">
+        <a th:if="${products.hasPrevious()}"
+           th:href="@{'/product/search-product'(page=${products.number - 1},nameSearch=${nameSearch},firstPrice=${firstPrice},secondPrice=${secondPrice},category=${idCategory})}"><i
+                class="fa-solid fa-angles-left"></i></a>
+        <span th:text="${products.number + 1}"></span>/<span th:text="${products.totalPages}"></span>
+        <a th:if="${products.hasNext()}"
+           th:href="@{'/product/search-product'(page=${products.number + 1},nameSearch=${nameSearch},firstPrice=${firstPrice},secondPrice=${secondPrice},category=${idCategory})}"><i
                 class="fa-solid fa-angles-right"></i></a>
     </div>
 </div>
