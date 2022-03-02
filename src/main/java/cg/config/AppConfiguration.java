@@ -83,7 +83,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter implements Applica
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/iamge/**")
+        registry.addResourceHandler("/image/**")
                 .addResourceLocations("file:" + fileUpload);
         registry.addResourceHandler("/assets/**")
                 .addResourceLocations("/assets/");

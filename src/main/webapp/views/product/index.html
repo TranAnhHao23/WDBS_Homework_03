@@ -56,13 +56,13 @@
                         <td>
                             <label>
                                 <input class="form-control mr-2" type="text" size="20" placeholder="First Price..."
-                                       name="searchByName" th:value="${fisrtPrice}">
+                                       name="firstPrice" th:value="${firstPrice}">
                             </label>
                         </td>
                         <td>
                             <label>
                                 <input class="form-control mr-2" type="text" size="20" placeholder="Second Price..."
-                                       name="searchByName" th:value="${secondPrice}">
+                                       name="secondPrice" th:value="${secondPrice}">
                             </label>
                         </td>
                     </tr>
@@ -94,7 +94,7 @@
             <span><b>Product List</b></span>
         </a>
     </h5>
-    <div class="card-body">
+    <div class="card-body" style="height: 462px">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -113,11 +113,11 @@
                     <td th:text="${product.name}"></td>
                     <td th:text="${product.price}"></td>
                     <td>
-                        <img th:src="@{${view}+${product.getImageUrl()}}" alt="error">
+                        <img th:src="@{${view} + ${product.getImageUrl()}}" alt="error">
                     </td>
                     <td th:text="${product.getCategory().nameCategory}"></td>
                     <td>
-                        <a th:href="@{/pruduct/edit(id=${product.getId()})}" role="button" type="button"
+                        <a th:href="@{/product/edit(id=${product.getId()})}" role="button" type="button"
                            class="btn btn-primary">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
