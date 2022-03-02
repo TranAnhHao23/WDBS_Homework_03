@@ -18,9 +18,131 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}" href="../../assets/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../assets/css/style.css" type="text/css">
+
 </head>
 <body>
-
+<table>
+    <tr class="title">
+        <td class="add-file">
+            <a th:href="@{/product/create-product}">
+                <button type="button" class="btn btn-outline-primary">
+                    <i class="fa-solid fa-plus"></i> Add New Product
+                </button>
+            </a> &emsp;
+            <a th:href="@{/category}">
+                <button type="button" class="btn btn-outline-primary">
+                    List Category
+                </button>
+            </a>
+        </td>
+        <td class="search-file">
+            <form class="nav-link d-flex" style="margin: 0" th:action="@{/home/search-product}" method="post">
+                <table>
+                    <tr>
+                        <td colspan="2">
+                            <label>
+                                <input class="form-control mr-2" type="text" size="50" placeholder="Search By Name..."
+                                       name="searchByName" th:value="${searchByName}">
+                            </label>
+                        </td>
+                        <td rowspan="3">
+                            <button class="btn btn-light ml-2" type="submit">
+                                <i class="fa-solid fa-magnifying-glass"></i> Search
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                <input class="form-control mr-2" type="text" size="20" placeholder="First Price..."
+                                       name="searchByName" th:value="${fisrtPrice}">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <input class="form-control mr-2" type="text" size="20" placeholder="Second Price..."
+                                       name="searchByName" th:value="${secondPrice}">
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <label for="sel1"></label>
+                            <select class="form-control" id="sel1">
+                                <optgroup label="Select Category">
+                                    <option th:each="cate : ${categories}" th:value="${cate.idCategory}"
+                                            th:text="${cate.nameCategory}"></option>
+                                </optgroup>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </td>
+    </tr>
+</table>
+<br><br>
+<h2 th:class="notify" th:if="${message} != null" th:style="'color:red'">
+    <span th:text="${message}"></span>
+    <button type="button" class="btn btn-outline-dark"><a th:href="@{/product}">Back</a></button>
+</h2>
+<div class="card" th:unless="${products.isEmpty()}">
+    <h5 class="card-header font-weight-light">
+        <a th:href="@{/product}" th:style="'text-decoration:none'">
+            <span class="fas fa-tasks fa-fw mr-3"></span>
+            <span><b>Product List</b></span>
+        </a>
+    </h5>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th colspan="3" style="text-align: center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product, productState : ${products}">
+                    <td th:text="${productState.count}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.price}"></td>
+                    <td>
+                        <img th:src="@{${view}+${product.getImageUrl()}}" alt="error">
+                    </td>
+                    <td th:text="${product.getCategory().nameCategory}"></td>
+                    <td>
+                        <a th:href="@{/pruduct/edit(id=${product.getId()})}" role="button" type="button"
+                           class="btn btn-primary">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{/product/view(id=${product.id})}" role="button" class="btn btn-info"><i
+                                class="fa-solid fa-circle-info"></i></a>
+                    </td>
+                    <td>
+                        <a th:href="@{/product/delete(id=${product.id})}" role="button" class="btn btn-danger"
+                           onclick="return confirm('Are you sure you want to Delete?')"><i
+                                class="fa-solid fa-trash-can"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <a th:if="${products.hasPrevious()}" th:href="@{'/product'(page=${products.number - 1})}"><i
+                class="fa-solid fa-angles-left"></i></a>
+        <span th:text="${products.number + 1}"></span>/<span th:text="${products.totalPages}"></span>
+        <a th:if="${products.hasNext()}" th:href="@{'/product'(page=${products.number + 1})}"><i
+                class="fa-solid fa-angles-right"></i></a>
+    </div>
+</div>
 </body>
 </html>

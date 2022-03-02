@@ -32,7 +32,7 @@ public class ProductController {
 
     @GetMapping
     public ModelAndView showAll(@SortDefault(sort = {"name"}, direction = Sort.Direction.ASC) @PageableDefault(value = 5) Pageable pageable) {
-        ModelAndView modelAndView = new ModelAndView("/product/index");
+        ModelAndView modelAndView = new ModelAndView("product/index");
         Page<Product> products = productService.findAll(pageable);
         if (products.isEmpty()){
             modelAndView.addObject("message","No Product!!!");
